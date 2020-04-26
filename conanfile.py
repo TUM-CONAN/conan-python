@@ -43,7 +43,9 @@ class PythonConan(ConanFile):
             autotools.configure(args=args)
             autotools.make()
             autotools.install()
-        # os.symlink("python3.7", os.path.join(self.package_folder, "bin", "python"))
+        with tools.chdir(os.path.join(self.package_folder, "bin")):
+            majmin_ver = ".".join(self.version.split(".")[:2])
+            os.symlink("python%s" % majmin_ver, "python")
 
     def package_info(self):
         self.env_info.PYTHON = os.path.join(self.package_folder, "bin", "python3")
