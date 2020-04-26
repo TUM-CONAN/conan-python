@@ -5,7 +5,7 @@ from conans import AutoToolsBuildEnvironment, ConanFile, tools
 
 class PythonConan(ConanFile):
     name = "python"
-    version = tools.get_env("GIT_TAG", "3.7.4")
+    version = tools.get_env("GIT_TAG", "3.8.2")
     settings = "os", "compiler", "build_type", "arch"
     license = "MIT"
     description = "Next generation of the python high-level scripting language"
@@ -15,11 +15,11 @@ class PythonConan(ConanFile):
         # self.build_requires("gcc/[>=7.4.0]@%s/stable" % self.user)
 
     def requirements(self):
-        self.requires("expat/[>=2.2.7]")
+        self.requires("expat/2.2.5-r2@camposs/stable")
         self.requires("openssl/[>=1.1.1b]")
         self.requires("libffi/3.3@camposs/stable")
         self.requires("zlib/[>=1.2.11]@camposs/stable")
-        self.requires("bzip2/[>=1.0.8]")
+        self.requires("bzip2/1.0.6@camposs/stable")
         self.requires("sqlite3/[>=3.29.0]")
 
     def source(self):
@@ -43,9 +43,10 @@ class PythonConan(ConanFile):
             autotools.configure(args=args)
             autotools.make()
             autotools.install()
-        os.symlink("python3.7", os.path.join(self.package_folder, "bin", "python"))
+        # os.symlink("python3.7", os.path.join(self.package_folder, "bin", "python"))
 
     def package_info(self):
-        self.env_info.PYTHON = os.path.join(self.package_folder, "bin", "python")
+        self.env_info.PYTHON = os.path.join(self.package_folder, "bin", "python3")
         self.env_info.PYTHONHOME = self.package_folder
-        self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "lib", "python3.7"))
+        majmin_ver = ".".join(self.version.split(".")[:2])
+        self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "lib", "python%s" % majmin_ver))
