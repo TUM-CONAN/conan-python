@@ -49,6 +49,8 @@ class PythonConan(ConanFile):
 
     def package_info(self):
         self.env_info.PYTHON = os.path.join(self.package_folder, "bin", "python3")
+        self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))
+        self.env_info.LD_LIBRARY_PATH.append(os.path.join(self.package_folder, "lib"))
         self.env_info.PYTHONHOME = self.package_folder
         majmin_ver = ".".join(self.version.split(".")[:2])
         self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "lib", "python%s" % majmin_ver))
