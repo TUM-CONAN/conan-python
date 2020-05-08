@@ -40,7 +40,10 @@ class PythonConan(ConanFile):
         ]
         with tools.chdir("Python-" + self.version):
             autotools = AutoToolsBuildEnvironment(self)
-            autotools.configure(args=args)
+            env_vars = autotools.vars
+            # linux only / osx needs @executable_path / windows a different build system
+            # env_vars['LDFLAGS'] = '-Wl,--rpath="%s"' % os.path.join(self.package_folder, "lib")
+            autotools.configure(args=args, vars=env_vars)
             autotools.make()
             autotools.install()
         with tools.chdir(os.path.join(self.package_folder, "bin")):
