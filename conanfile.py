@@ -5,7 +5,7 @@ from conans import AutoToolsBuildEnvironment, ConanFile, tools
 
 class PythonConan(ConanFile):
     name = "python"
-    version = tools.get_env("GIT_TAG", "3.8.2")
+    version = tools.get_env("GIT_TAG", "3.8.11")
     settings = "os", "compiler", "build_type", "arch"
     license = "MIT"
     description = "Next generation of the python high-level scripting language"
@@ -56,4 +56,5 @@ class PythonConan(ConanFile):
         self.env_info.LD_LIBRARY_PATH.append(os.path.join(self.package_folder, "lib"))
         self.env_info.PYTHONHOME = self.package_folder
         majmin_ver = ".".join(self.version.split(".")[:2])
+        self.env_info.PYTHON_VERSION.append(majmin_ver)
         self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "lib", "python%s" % majmin_ver))
