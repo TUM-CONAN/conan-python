@@ -14,20 +14,10 @@ class PythonConan(ConanFile):
         self.build_requires("generators/1.0.0@camposs/stable")
         # self.build_requires("gcc/[>=7.4.0]@%s/stable" % self.user)
 
-    # Add: sys-requires: 
-    def system_requirements(self):
-        if tools.os_info.is_linux:
-            if tools.os_info.with_apt:
-                installer = tools.SystemPackageTool()
-                installer.install("libffi-dev")
-            else:
-                self.output.warn("Could not determine package manager, skipping Linux system requirements installation.")
-
-
     def requirements(self):
         self.requires("expat/2.2.5-r2@camposs/stable")
         self.requires("openssl/[>=1.1.1b]")
-        self.requires("libffi/3.3@camposs/stable")
+        self.requires("libffi/3.4.2")
         self.requires("zlib/[>=1.2.11]@camposs/stable")
         self.requires("bzip2/1.0.6@camposs/stable")
         self.requires("sqlite3/[>=3.29.0]")
