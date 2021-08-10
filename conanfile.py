@@ -15,7 +15,7 @@ class PythonConan(ConanFile):
         # self.build_requires("gcc/[>=7.4.0]@%s/stable" % self.user)
 
     def requirements(self):
-        self.requires("expat/2.2.5-r2@camposs/stable")
+        self.requires("expat/2.2.5-r3@camposs/stable")
         self.requires("openssl/[>=1.1.1b]")
         self.requires("libffi/3.4.2")
         self.requires("zlib/[>=1.2.11]@camposs/stable")
