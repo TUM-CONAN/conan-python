@@ -11,6 +11,7 @@ from conan.tools.gnu import Autotools, AutotoolsToolchain, AutotoolsDeps, PkgCon
 from conan.tools.layout import basic_layout
 from conan.tools.microsoft import MSBuildDeps, MSBuildToolchain, MSBuild, is_msvc, is_msvc_static_runtime, msvc_runtime_flag, msvs_toolset
 from conan.tools.scm import Version
+from conan.tools.system.package_manager import Apt
 
 required_conan_version = ">=1.58.0"
 
@@ -102,8 +103,17 @@ class CPythonConan(ConanFile):
             self.options.rm_safe("with_tkinter")
             self.options.rm_safe("with_lzma")
 
+        # if self.options.get_safe("with_curses", False):
+        #     self.options["ncurses/*"].shared = True
+        # if self.options.get_safe("with_readline", False):
+        #     self.options["readline/*"].with_library = "curses"
+        #     self.options["readline/*"].shared = True
+
     def layout(self):
         basic_layout(self, src_folder="src")
+
+    def system_requirements(self):
+        Apt(self).install(["libreadline-dev"])
 
     def build_requirements(self):
         if Version(self.version) >= "3.11" and not is_msvc(self) and not self.conf.get("tools.gnu:pkg_config", check_type=str):
@@ -146,8 +156,8 @@ class CPythonConan(ConanFile):
             self.requires("ncurses/6.4", transitive_headers=True, transitive_libs=True)
         if self.options.get_safe("with_lzma", False):
             self.requires("xz_utils/5.4.5")
-        if self.options.get_safe("with_readline", False):
-            self.requires("readline/8.2", transitive_headers=True, transitive_libs=True)
+        # if self.options.get_safe("with_readline", False):
+        #     self.requires("readline/8.2", transitive_headers=True, transitive_libs=True)
 
     def package_id(self):
         del self.info.options.env_vars
@@ -893,8 +903,8 @@ class CPythonConan(ConanFile):
                 self.cpp_info.components["_hidden"].requires.append("xz_utils::xz_utils")
             if self.options.get_safe("with_tkinter"):
                 self.cpp_info.components["_hidden"].requires.append("tk::tk")
-            if self.options.get_safe("with_readline", False):
-                self.cpp_info.components["_hidden"].requires.append("readline::readline")
+            # if self.options.get_safe("with_readline", False):
+            #     self.cpp_info.components["_hidden"].requires.append("readline::readline")
             self.cpp_info.components["_hidden"].includedirs = []
             self.cpp_info.components["_hidden"].libdirs = []
             if self.settings.os in ["Linux", "FreeBSD"]:
