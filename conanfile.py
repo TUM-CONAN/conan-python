@@ -5,7 +5,7 @@ import textwrap
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
 from conan.tools.apple import is_apple_os, fix_apple_shared_install_name
-from conan.tools.env import VirtualRunEnv
+from conan.tools.env import VirtualRunEnv, Environment
 from conan.tools.files import apply_conandata_patches, copy, export_conandata_patches, get, load, mkdir, replace_in_file, rm, rmdir, save, unzip
 from conan.tools.gnu import Autotools, AutotoolsToolchain, AutotoolsDeps, PkgConfigDeps
 from conan.tools.layout import basic_layout
@@ -17,6 +17,7 @@ required_conan_version = ">=1.58.0"
 
 class CPythonConan(ConanFile):
     name = "cpython"
+    version = "3.10.14"
     description = "Python is a programming language that lets you work quickly and integrate systems more effectively."
     license = "Python-2.0"
     url = "https://github.com/conan-io/conan-center-index"
@@ -727,7 +728,12 @@ class CPythonConan(ConanFile):
             if is_apple_os(self):
                 # FIXME: See https://github.com/python/cpython/issues/109796, this workaround is mentioned there
                 autotools.make(target="sharedinstall", args=["DESTDIR="])
-            autotools.install(args=["DESTDIR="])
+
+            env = Environment()
+            env.define("PYTHONHOME", self.package_folder)
+            with env.vars(self).apply():
+                autotools.install(args=["DESTDIR="])
+
             rmdir(self, os.path.join(self.package_folder, "lib", "pkgconfig"))
             rmdir(self, os.path.join(self.package_folder, "share"))
 
