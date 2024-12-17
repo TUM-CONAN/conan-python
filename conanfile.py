@@ -40,6 +40,7 @@ class CPythonConan(ConanFile):
         "with_tkinter": [True, False],
         "with_curses": [True, False],
         "with_lzma": [True, False],
+        "with_readline": [True, False],
 
         # options that don't change package id
         "env_vars": [True, False],  # set environment variables
@@ -58,6 +59,7 @@ class CPythonConan(ConanFile):
         "with_tkinter": True,
         "with_curses": True,
         "with_lzma": True,
+        "with_readline": True,
 
         # options that don't change package id
         "env_vars": True,
@@ -144,6 +146,8 @@ class CPythonConan(ConanFile):
             self.requires("ncurses/6.4", transitive_headers=True, transitive_libs=True)
         if self.options.get_safe("with_lzma", False):
             self.requires("xz_utils/5.4.5")
+        if self.options.get_safe("with_readline", False):
+            self.requires("readline/8.2", transitive_headers=True, transitive_libs=True)
 
     def package_id(self):
         del self.info.options.env_vars
@@ -213,6 +217,9 @@ class CPythonConan(ConanFile):
             tc.configure_args.append("--enable-loadable-sqlite-extensions={}".format(
                 yes_no(not self.dependencies["sqlite3"].options.omit_load_extension)
             ))
+        if self.options.get_safe("with_readline"):
+            tc.configure_args.append("--with-readline")
+
         if self.options.with_tkinter and Version(self.version) < "3.11":
             tcltk_includes = []
             tcltk_libs = []
@@ -886,6 +893,8 @@ class CPythonConan(ConanFile):
                 self.cpp_info.components["_hidden"].requires.append("xz_utils::xz_utils")
             if self.options.get_safe("with_tkinter"):
                 self.cpp_info.components["_hidden"].requires.append("tk::tk")
+            if self.options.get_safe("with_readline", False):
+                self.cpp_info.components["_hidden"].requires.append("readline::readline")
             self.cpp_info.components["_hidden"].includedirs = []
             self.cpp_info.components["_hidden"].libdirs = []
             if self.settings.os in ["Linux", "FreeBSD"]:
